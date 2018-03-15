@@ -10,11 +10,21 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="js/sockjs-client/sockjs.min.js"></script>
+<script src="js/stomp-websocket/stomp.min.js"></script>
+	
 <script type="text/javascript">
 	var protocol = location.protocol;
 	var slashes = protocol.concat("//");
 	var host = slashes.concat(window.location.host);
+	var stompClient = null;
+    var socket = new SockJS('/gs-guide-websocket');
+    stompClient = Stomp.over(socket);
+
 	$(document).ready(function() {
+	    stompClient.connect({}, function (frame) {
+	    	
+	    });
 		var email = localStorage["email"];
 		if (email) {
 			$.ajax({
@@ -24,6 +34,7 @@
 	            success: function(data, textStatus, jQxhr ){
 	            	if (data) {
 	            		localStorage["userId"] = data.id;
+	            		window.location = host + "/postcomments.html"
 	            	} else {
 	            		$("#myModal").modal();
 	            	}
@@ -77,7 +88,9 @@
     	            	localStorage["email"] = email;
     	            	localStorage["name"] = name;
     	            	localStorage["topic"] = topic;
-    	            	window.location = host + "/postcomments.html"
+	            		stompClient.send("/app/publishuser", {});
+
+    	            	window.location = host + "/postcomments.html";
     	                
     	            },
     	            error: function( jqXhr, textStatus, errorThrown ){

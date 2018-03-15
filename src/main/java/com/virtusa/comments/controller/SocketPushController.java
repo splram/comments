@@ -21,4 +21,9 @@ public class SocketPushController {
     public String publish() throws Exception {
     	return "done";
     }
+    @MessageMapping("/publishuser")
+    @SendTo("/topic/users")
+    public String publishUser() throws Exception {
+    	return "done";
+    }
 }

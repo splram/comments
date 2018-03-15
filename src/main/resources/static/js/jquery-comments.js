@@ -286,6 +286,22 @@
                 self.stompClient.subscribe('/topic/comments', function () {
                 	self.fetchDataAndRender(true);
                 });
+                self.stompClient.subscribe('/topic/users', function () {
+                	$.ajax({
+			            type: 'GET',
+			            url: '/users/',
+			            success: function(userArray) {
+			            	usersArray = userArray;
+			            	$(userArray).each(function(index, user) {
+		                        self.usersById[user.id] = user;
+		                    });
+
+			            },
+			            error: function(err) {
+			            	console.log('Error while getting users', err);
+			            }
+			        });
+                });
             });
             this.dashboard=options.dashboard;
             this.$el = $(el);
