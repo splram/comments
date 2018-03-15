@@ -36,7 +36,6 @@
 	var protocol = location.protocol;
 	var slashes = protocol.concat("//");
 	var host = slashes.concat(window.location.host);
-
 	var email = localStorage["email"];
 	var topic = localStorage["topic"];
 	if (typeof email === undefined || email === undefined) {
@@ -72,6 +71,7 @@
         // ==================
 
         $el: null,
+        usersArray:[],
         commentsById: {},
         usersById: {},
         dataFetched: false,
@@ -233,6 +233,7 @@
 					            type: 'GET',
 					            url: '/users/',
 					            success: function(userArray) {
+					            	usersArray = userArray;
 					                success(userArray)
 					            },
 					            error: error
@@ -242,6 +243,9 @@
                 	
                 	//success([])
                 	
+                },
+                getUsersArray : function() {
+                	return usersArray;
                 },
                 getComments: function(success, error) {
                 	setTimeout(function() {

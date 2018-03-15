@@ -90,6 +90,10 @@ public class CommentController {
 	@PutMapping(path = "/{id}")
 	public Comment update(@PathVariable("id") Long id, @RequestBody Comment comment) throws BadHttpRequest {
 		if (repository.exists(id)) {
+			Comment dbComment = this.find(id);
+			if (dbComment != null) {
+				comment.setUpvote_count(dbComment.getUpvote_count());
+			}
 			comment.setId(id);
 			return repository.save(comment);
 		} else {
