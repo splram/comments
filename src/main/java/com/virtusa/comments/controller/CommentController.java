@@ -58,6 +58,18 @@ public class CommentController {
 		}
 		return result;
 	}
+	
+	@GetMapping(path = "/topics/{topicId}", params = {"userId", "status"})
+	public Iterable<Comment> findAllByUserIdTopicIdStatus(@PathVariable("topicId") Long topicId,
+			@RequestParam(value = "userId") Long userId, @RequestParam(value = "status") String status) {
+		Iterable<Comment> comments = repository.findAllByUserIdTopicIdStatus(topicId, status);
+		List<Comment> result = new ArrayList<Comment>();
+		for (Comment comment : comments) {
+			comment = updateCommentModel(comment, userId);
+			result.add(comment);
+		}
+		return result;
+	}
 
 	@GetMapping(path = "/topics/{topicId}", params = "userId")
 	public Iterable<Comment> findAllByUserIdAndTopicId(@PathVariable("topicId") Long topicId,

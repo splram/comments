@@ -63,6 +63,15 @@ public class Comment {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
+	
+	private String status = "waiting";
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	@Column(name = "userId")
     private Long userId;

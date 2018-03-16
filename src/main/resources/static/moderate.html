@@ -10,6 +10,7 @@
 		<link rel="stylesheet" type="text/css" href="css/jquery-comments.css">
 		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
+
 		<!-- Libraries -->
 		<script type="text/javascript" src="js/jquery.min.js"></script>
 		<script type="text/javascript" src="js/jquery.textcomplete.js"></script>
@@ -17,6 +18,7 @@
    		<script src="js/stomp-websocket/stomp.min.js"></script>
 		<script type="text/javascript" src="js/app.js"></script>
 		<script type="text/javascript" src="js/jquery-comments.js"></script>
+		
 
 		<style type="text/css">
 			body {
@@ -45,21 +47,22 @@
 					return data;
 				}
 				$('#comments-container').comments({
+					enableAccept:true,
 					dashboard:true,
-					profilePictureURL: host + '/images/user-icon.png',
+					profilePictureURL: 'https://viima-app.s3.amazonaws.com/media/user_profiles/user-icon.png',
 					currentUserId: localStorage["userId"],
 					roundProfilePictures: true,
 					textareaRows: 1,
 					enableReplying: false,
 					enableEditing:false,
-					enableUpvoting:true,
+					enableUpvoting:false,
 					enableAttachments: false,
 					enableHashtags: false,
 					enablePinging: false,
-	                getComments: function(success, error) {
+					getComments: function(success, error) {
 						 $.ajax({
 					            type: 'GET',
-					            url: '/comments/topics/' + localStorage["topic"] + '?userId=' + localStorage["userId"] + '&status=approved',
+					            url: '/comments/topics/' + localStorage["topic"] + '?userId=' + localStorage["userId"] + '&status=waiting',
 					            success: function(commentsArray) {
 					                success(commentsArray)
 					            },

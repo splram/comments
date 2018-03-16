@@ -10,4 +10,6 @@ import com.virtusa.comments.entities.Comment;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 	@Query(value = "select * from Comment c where c.topic= :topicId", nativeQuery = true)
 	public List<Comment> findAllByTopic(@Param("topicId") Long topicId);
+	@Query(value = "select * from Comment c where c.topic= :topicId and status= :status", nativeQuery = true)
+	public List<Comment> findAllByUserIdTopicIdStatus(@Param("topicId") Long topicId, @Param("status") String status);
 }

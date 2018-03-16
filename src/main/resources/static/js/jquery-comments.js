@@ -120,6 +120,7 @@
             'click li.comment ul.child-comments .toggle-all': 'toggleReplies',
             'click li.comment button.reply': 'replyButtonClicked',
             'click li.comment button.edit': 'editButtonClicked',
+            'click li.comment button.accept': 'acceptButtonClicked',
 
             // Drag & dropping attachments
             'dragenter' : 'showDroppableOverlay',
@@ -167,6 +168,7 @@
                 attachmentsText: 'Attachments',
                 sendText: 'Send',
                 replyText: 'Reply',
+                acceptText : 'Accept',
                 editText: 'Edit',
                 editedText: 'Edited',
                 youText: "You",
@@ -175,7 +177,7 @@
                 newText: 'New',
                 viewAllRepliesText: 'View all __replyCount__ replies',
                 hideRepliesText: 'Hide replies',
-                noCommentsText: 'No comments',
+                noCommentsText: 'No questions',
                 noAttachmentsText: 'No attachments',
                 attachmentDropText: 'Drop files here',
                 textFormatter: function(text) {return text},
@@ -193,6 +195,7 @@
                 postCommentOnEnter: false,
                 forceResponsive: false,
                 readOnly: false,
+                enableApprove:false,
                 defaultNavigationSortKey: 'newest',
                 
                 // Colors     
@@ -247,20 +250,7 @@
                 getUsersArray : function() {
                 	return usersArray;
                 },
-                getComments: function(success, error) {
-                	setTimeout(function() {
-						 $.ajax({
-					            type: 'GET',
-					            url: '/comments/topics/' + localStorage["topic"] + '?userId=' + localStorage["userId"],
-					            success: function(commentsArray) {
-					                success(commentsArray)
-					            },
-					            error: error
-					        });
-						//success(usersArray);
-					}, 500);
-                	
-                },
+                getComments: function(success, error) {success([])},
                 postComment: function(commentJSON, success, error) {success(commentJSON)},
                 putComment: function(commentJSON, success, error) {success(commentJSON)},
                 deleteComment: function(commentJSON, success, error) {success()},
@@ -1173,6 +1163,13 @@
                 }
             }
         },
+        
+        acceptButtonClicked:function(ev) {
+        	var acceptButton = $(ev.currentTarget);
+            var outermostParent = acceptButton.parents('li.comment').last();
+            var parentId = acceptButton.parents('.comment').first().data().id;
+            alert(parentId);
+        },
 
         editButtonClicked: function(ev) {
             var editButton = $(ev.currentTarget);
@@ -1801,7 +1798,11 @@
             });
 
             // Profile picture
-            var profilePicture = this.createProfilePictureElement(commentModel.profilePictureURL);
+            var pictureUrl = commentModel.profilePictureURL;
+            if (!pictureUrl) {
+            	pictureUrl = "images/user-icon.png";
+            }
+            var profilePicture = this.createProfilePictureElement(pictureUrl);
 
             // Time
             var time = $('<time/>', {
@@ -1973,6 +1974,12 @@
                 'type': 'button',
                 text: this.options.textFormatter(this.options.replyText)
             });
+            
+            var accept = $('<button/>', {
+                'class': 'action accept',
+                'type': 'button',
+                text: this.options.textFormatter(this.options.acceptText)
+            });
 
             // Upvote icon
             var upvoteIcon = $('<i/>', {
@@ -1985,10 +1992,10 @@
 
             // Upvotes
             var upvotes = this.createUpvoteElement(commentModel);
-
             // Append buttons for actions that are enabled
             if(this.options.enableReplying) actions.append(reply);
             if(this.options.enableUpvoting) actions.append(upvotes);
+            if(this.options.enableAccept) actions.append(accept);
 
             if(commentModel.createdByCurrentUser || this.options.currentUserIsAdmin) {
 
