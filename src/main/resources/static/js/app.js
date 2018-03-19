@@ -1,5 +1,48 @@
 var stompClient = null;
+var saveComment = function(data, success, usersArray, putFlag) {
+	// Convert pings to human readable format
+	$(data.pings).each(function(index, id) {
+		var user = usersArray.filter(function(user){return user.id == id})[0];
+		data.content = data.content.replace('@' + id, '@' + user.fullname);
+	});
+	data.userId = localStorage["userId"];
+	data.topic = localStorage["topic"];;
 
+	var postData = {};
+	postData.content = data.content;
+	postData.userId = data.userId;
+	postData.topic = data.topic;
+	if (data.parent) {
+		postData.parent = data.parent;
+	}
+	var url = host + '/comments';
+	var type = 'POST'
+	if (putFlag) {
+		url = url + "/" + data.id;
+		type = 'PUT';
+	}
+	$.ajax({
+            type: type,
+            url: url,
+            data:JSON.stringify(postData),
+            dataType: "text",
+            contentType: 'application/json',
+            success: function(savedData, textStatus, jQxhr ){
+            	var parsedData = JSON.parse(savedData);
+            	if (putFlag) {
+	            	data.id =  parsedData.id;
+            	} else {
+	            	data.id = 'c' + parsedData.id;
+            	}
+            	success(data);
+            },
+            error: function( jqXhr, textStatus, errorThrown ){
+                console.log( errorThrown );
+            }
+        });
+	 
+	return data;
+}
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);

@@ -35,17 +35,6 @@
 		var slashes = protocol.concat("//");
 		var host = slashes.concat(window.location.host);
 			$(function() {
-				
-				var saveComment = function(data) {
-
-					// Convert pings to human readable format
-					$(data.pings).each(function(index, id) {
-						var user = usersArray.filter(function(user){return user.id == id})[0];
-						data.content = data.content.replace('@' + id, '@' + user.fullname);
-					});
-
-					return data;
-				}
 				$('#comments-container').comments({
 					enableAccept:true,
 					dashboard:true,
@@ -71,13 +60,51 @@
 							//success(usersArray);
 	                },
 					postComment: function(data, success, error) {
+						var self = this;
+						var commentIdBeforePost = data.id;
 						setTimeout(function() {
-							success(saveComment(data));
+							var savedComment = saveComment(data, success, self.getUsersArray()); 
+							//success(savedComment);
 						}, 500);
 					},
 					putComment: function(data, success, error) {
+						var self = this;
 						setTimeout(function() {
-							success(saveComment(data));
+							//var savedComment = saveComment(data, success, self.getUsersArray(), true);
+							//success(saveComment(data, success));
+								$(data.pings).each(function(index, id) {
+									var user = usersArray.filter(function(user){return user.id == id})[0];
+									data.content = data.content.replace('@' + id, '@' + user.fullname);
+								});
+								data.userId = localStorage["userId"];
+								data.topic = localStorage["topic"];;
+							
+								var postData = {};
+								postData.content = data.content;
+								postData.userId = data.userId;
+								postData.topic = data.topic;
+								postData.status = "approved";
+
+							var url = host + '/comments';
+								url = url + "/" + data.id;
+							var type = 'PUT';
+							$.ajax({
+						            type: type,
+						            url: url,
+						            data:JSON.stringify(postData),
+						            dataType: "text",
+						            contentType: 'application/json',
+						            success: function(savedData, textStatus, jQxhr ){
+						            	var parsedData = JSON.parse(savedData);
+						            	data.id =  parsedData.id;
+						            	success(data);
+						            },
+						            error: function( jqXhr, textStatus, errorThrown ){
+						                console.log( errorThrown );
+						            }
+						        });
+							 
+							return data;
 						}, 500);
 					},
 					deleteComment: function(data, success, error) {
@@ -86,13 +113,11 @@
 						}, 500);
 					},
 					upvoteComment: function(data, success, error) {
-						console.log('Upvote data===', data);
 						var commentId = data.id + "";
 						if (commentId && commentId.indexOf("c") === 0) {
 							commentId = commentId.substring(commentId.indexOf("c")+1);
 						}
 						var user_has_upvoted = data.user_has_upvoted;
-						console.log(commentId);
 						var postData = {
 								"user_has_upvoted":user_has_upvoted
 						};
@@ -103,11 +128,7 @@
 					            data:JSON.stringify(postData),
 					            dataType: "text",
 					            contentType: 'application/json',
-					            /*success: function(savedData, textStatus, jQxhr ){
-					            	var parsedData = JSON.parse(savedData);
-					            	data.id = 'c' + parsedData.id;
-					            	success(data);
-					            },*/
+					           
 					            error: function( jqXhr, textStatus, errorThrown ){
 					                console.log( errorThrown );
 					            }

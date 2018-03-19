@@ -248,6 +248,9 @@
                 	
                 },
                 getUsersArray : function() {
+                	if (!usersArray) {
+                		this.getUsers(function() {}, function() {})
+                	}
                 	return usersArray;
                 },
                 getComments: function(success, error) {success([])},
@@ -1165,10 +1168,23 @@
         },
         
         acceptButtonClicked:function(ev) {
+        	var success = function() {
+                self.publish();
+            };
+
+            var error = function() {
+                acceptButton.addClass('enabled');
+            };
+            
+        	var self = this;
+            var commentEl = $(ev.currentTarget).parents('li.comment').first();
+            var commentModel = commentEl.data().model;
         	var acceptButton = $(ev.currentTarget);
             var outermostParent = acceptButton.parents('li.comment').last();
             var parentId = acceptButton.parents('.comment').first().data().id;
-            alert(parentId);
+            var commentJSON = $.extend({}, commentModel);
+            commentJSON = this.applyExternalMappings(commentJSON);
+            this.options.putComment(commentJSON, success, error);
         },
 
         editButtonClicked: function(ev) {
