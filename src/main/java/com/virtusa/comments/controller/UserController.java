@@ -47,7 +47,10 @@ public class UserController {
     public void delete(@PathVariable("id") Long id) {
         repository.delete(id);
     }
-
+    @GetMapping(path = "/deleteall")
+    public void deleteAll() {
+        repository.deleteAll();
+    }
     @PutMapping(path = "/{id}")
     public User update(@PathVariable("id") Long id, @RequestBody User user) throws BadHttpRequest {
         if (repository.exists(id)) {

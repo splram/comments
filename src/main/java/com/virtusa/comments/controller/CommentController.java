@@ -93,7 +93,11 @@ public class CommentController {
 		return repository.save(comment);
 	}
 
-
+	@GetMapping(path = "/deleteall")
+	public void deleteAll() {
+		repository.deleteAll();
+		upVoteRepository.deleteAll();
+	}
 	@DeleteMapping(path = "/{id}")
 	public void delete(@PathVariable("id") Long id) {
 		repository.delete(id);
