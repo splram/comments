@@ -100,11 +100,11 @@
 					            data:JSON.stringify(postData),
 					            dataType: "text",
 					            contentType: 'application/json',
-					            /*success: function(savedData, textStatus, jQxhr ){
+					            success: function(savedData, textStatus, jQxhr ){
 					            	var parsedData = JSON.parse(savedData);
-					            	data.id = 'c' + parsedData.id;
-					            	success(data);
-					            },*/
+					            	//data.id = 'c' + parsedData.id;
+					            	success(parsedData);
+					            },
 					            error: function( jqXhr, textStatus, errorThrown ){
 					                console.log( errorThrown );
 					            }

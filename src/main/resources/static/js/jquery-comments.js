@@ -1114,8 +1114,10 @@
 
             var success = function(commentJSON) {
                 var commentModel = self.createCommentModel(commentJSON);
-                self.updateCommentModel(commentModel);
-                self.reRenderUpvotes(commentModel.id);
+                if (commentModel && typeof commentModel != 'undefined') {
+                    self.updateCommentModel(commentModel);
+                    self.reRenderUpvotes(commentModel.id);
+                }
                 self.publish();
             };
 
@@ -2103,13 +2105,15 @@
 
         reRenderUpvotes: function(id) {
             var commentModel = this.commentsById[id];
-            var commentElements = this.$el.find('li.comment[data-id="'+commentModel.id+'"]');
+            if (commentModel) {
+                var commentElements = this.$el.find('li.comment[data-id="'+commentModel.id+'"]');
 
-            var self = this;
-            commentElements.each(function(index, commentEl) {
-                var upvotes = self.createUpvoteElement(commentModel);
-                $(commentEl).find('.upvote').first().replaceWith(upvotes);
-            });
+                var self = this;
+                commentElements.each(function(index, commentEl) {
+                    var upvotes = self.createUpvoteElement(commentModel);
+                    $(commentEl).find('.upvote').first().replaceWith(upvotes);
+                });
+            }
         },
 
 
