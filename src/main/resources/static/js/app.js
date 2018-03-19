@@ -65,7 +65,7 @@ function connect() {
             showGreeting(JSON.parse(greeting.body).content);
         });
         stompClient.subscribe('/topic/comments', function () {
-        	console.log('xxxxxxxxxxxxx');
+        	//console.log('xxxxxxxxxxxxx');
         });
     });
 }
